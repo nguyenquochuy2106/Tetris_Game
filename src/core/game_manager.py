@@ -1,122 +1,106 @@
-# Student 2: game_manager.py
-# main game logic: spawn, move, lock, scoring, menu-state
-
-import pygame, time
-from core.board import Board
-from core.tetromino import Tetromino
-from core.particles import ParticleSystem
-from core.leaderboard import load_leaderboard, save_leaderboard
-from config import BLOCK, ROWS, COLS
-import os
+import pygame
+import random
+from .tetromino import Tetromino
+from .board import Board
+from .leaderboard import Leaderboard
 
 class GameManager:
-    def __init__(self, theme):
+    def __init__(self):
         self.board = Board()
-        self.piece = Tetromino()
-        self.next_piece = Tetromino()
-        self.drop_interval = 0.8  # seconds
-        self.drop_timer = 0.0
-        self.level = 1
+        self.current = Tetromino()
+        self.next = Tetromino()
         self.score = 0
         self.lines = 0
-        self.paused = False
-        self.over = False
-        self.theme = theme
+        self.level = 1
+        self.drop_timer = 0.0
+        self.speed_level = 0
+        self.drop_interval = 0.8
+        self.game_over = False
+        self.leaderboard = Leaderboard()
 
-        self.particles = ParticleSystem()
+        print(f"[DEBUG] Created piece {self.current.key} at x={self.current.x}, y={self.current.y}")
+        print(f"[DEBUG] Created piece {self.next.key} at x={self.next.x}, y={self.next.y}")
+        print("[DEBUG] GameManager initialized")
 
-        # load sounds (Student 2: ensure files exist in assets)
-        self.snd_move = self._load_sound("move.wav")
-        self.snd_rotate = self._load_sound("rotate.wav")
-        self.snd_drop = self._load_sound("drop.wav")
-        self.snd_clear = self._load_sound("clear.wav")
-
-        self.leaderboard = load_leaderboard()
-
-    def _load_sound(self, fname):
-        path = os.path.join("assets","sounds", fname)
+        # load sounds
         try:
-            return pygame.mixer.Sound(path)
+            self.snd_move = pygame.mixer.Sound("assets/sounds/move.wav")
+            self.snd_rotate = pygame.mixer.Sound("assets/sounds/rotate.wav")
+            self.snd_drop = pygame.mixer.Sound("assets/sounds/drop.wav")
+            self.snd_clear = pygame.mixer.Sound("assets/sounds/clear.wav")
         except Exception:
-            return None
+            self.snd_move = self.snd_rotate = self.snd_drop = self.snd_clear = None
 
-    def update(self, dt):
-        if self.paused or self.over:
+    def reset(self):
+        self.__init__()
+
+    def update(self, dt=0.016):
+        if self.game_over:
             return
         self.drop_timer += dt
-        self.particles.update(dt)
         if self.drop_timer >= self.drop_interval:
             self.drop_timer = 0
             self._soft_drop()
 
     def _soft_drop(self):
-        if self.board.valid(self.piece, dy=1):
-            self.piece.y += 1
+        if self.board.valid_position(self.current, dy=1):
+            self.current.y += 1
         else:
-            # lock
-            self.board.place(self.piece)
-            if self.snd_drop: self.snd_drop.play()
-            cleared_rows = self.board.clear_lines()
-            if cleared_rows:
-                # compute score
-                self.lines += len(cleared_rows)
-                self.score += (100 * (2**(len(cleared_rows)-1))) * self.level
-                self.level = 1 + self.lines // 10
-                # spawn particles from cleared rows
-                # We need colors from board snapshot; but board.clear_lines already shifted board.
-                # For effect we'll spawn from approximate y positions (use cleared rows)
-                for r in cleared_rows:
-                    # spawn using board x/y offsets in UI rendering
-                    self.particles.emit_from_row(r, 20, 20, BLOCK, [None]*COLS)
-                if self.snd_clear: self.snd_clear.play()
-            # spawn next
-            self.piece = self.next_piece
-            self.next_piece = Tetromino()
-            # if collision immediately -> game over
-            if not self.board.valid(self.piece):
-                self.over = True
+            self.lock_current()
 
-    # input controls:
     def move_left(self):
-        if self.board.valid(self.piece, dx=-1):
-            self.piece.x -= 1
+        if self.board.valid_position(self.current, dx=-1):
+            self.current.x -= 1
             if self.snd_move: self.snd_move.play()
 
     def move_right(self):
-        if self.board.valid(self.piece, dx=1):
-            self.piece.x += 1
+        if self.board.valid_position(self.current, dx=1):
+            self.current.x += 1
             if self.snd_move: self.snd_move.play()
 
-    def rotate(self):
-        # try rotate with simple wall kicks
-        old_grid = [row[:] for row in self.piece.grid]
-        old_x = self.piece.x
-        self.piece.rotate()
-        kicks = [0, -1, 1, -2, 2]
-        for k in kicks:
-            if self.board.valid(self.piece, dx=k):
-                self.piece.x += k
+    def rotate_piece(self):
+        old_shape = [row[:] for row in self.current.shape]
+        old_x = self.current.x
+        self.current.rotate()
+        for dx in (0, -1, 1, -2, 2):
+            if self.board.valid_position(self.current, dx=dx):
+                self.current.x += dx
                 if self.snd_rotate: self.snd_rotate.play()
                 return
-        # revert
-        self.piece.grid = old_grid
-        self.piece.x = old_x
+        self.current.shape = old_shape
+        self.current.x = old_x
+
+    def soft_drop(self):
+        self._soft_drop()
 
     def hard_drop(self):
-        while self.board.valid(self.piece, dy=1):
-            self.piece.y += 1
-        # lock immediately
-        self._soft_drop()
+        while self.board.valid_position(self.current, dy=1):
+            self.current.y += 1
         if self.snd_drop: self.snd_drop.play()
+        self.lock_current()
 
-    def toggle_pause(self):
-        self.paused = not self.paused
+    def lock_current(self):
+        self.board.place_piece(self.current)
+        cleared = self.board.clear_lines()
 
-    def reset(self):
-        self.__init__(self.theme)
+        if cleared:
+            self.lines += cleared
+            self.score += cleared * 100 * self.level
+            if self.snd_clear: self.snd_clear.play()
+            self.speed_level += cleared
+            self.drop_interval = max(0.05, 0.8 - (self.speed_level * 0.03))
 
-    def save_score(self, name="Player"):
-        # append and save top 10
-        self.leaderboard.append({"name": name, "score": self.score, "time": time.time()})
-        self.leaderboard = sorted(self.leaderboard, key=lambda r: -r["score"])[:10]
-        save_leaderboard(self.leaderboard)
+        # spawn next piece
+        self.current = self.next
+        self.next = Tetromino()
+        print(f"[DEBUG] New piece spawned at x={self.current.x}, y={self.current.y}")
+
+        # 🔥 CHECK GAME OVER IMMEDIATELY
+        if not self.board.valid_position(self.current):
+            print(f"[DEBUG] Piece {self.current.key} cannot spawn. Game Over!")
+            self.game_over_event()
+
+    def game_over_event(self):
+        self.game_over = True
+        self.leaderboard.add_score("Player", self.score)
+        print(f"[DEBUG] Game Over! Final Score: {self.score}")
