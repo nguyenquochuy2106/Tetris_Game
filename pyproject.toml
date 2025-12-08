@@ -1,11 +1,7 @@
 [project]
-name = "tetris-game"
-version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "pygame>=2.6.1",
-    "pygame-menu>=4.5.2",
-    "pyinstaller>=6.17.0",
-]
+name = "tetris_project"
+version = "1.0.0"
+requires-python = ">=3.10"
+
+[tool.uv]
+venv = ".venv"
