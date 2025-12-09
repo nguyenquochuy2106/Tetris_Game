@@ -1,231 +1,173 @@
-# Tetris Neon - Student Project
-
-![Tetris Neon Screenshot](assets/images/game_screenshot.png)
+# Tetris Neon Project
 
 ## Table of Contents
-- [Tetris Neon - Student Project](#tetris-neon---student-project)
+- [Tetris Neon Project](#tetris-neon-project)
   - [Table of Contents](#table-of-contents)
   - [Project Overview](#project-overview)
   - [Directory Structure](#directory-structure)
   - [Environment Setup](#environment-setup)
-  - [Game Features](#game-features)
-  - [Function Overview](#function-overview)
-    - [GameManager](#gamemanager)
-    - [Board](#board)
-    - [Tetromino](#tetromino)
-    - [UI Renderer](#ui-renderer)
-    - [Menu](#menu)
   - [How to Run](#how-to-run)
-  - [Contributing](#contributing)
-  - [Tasks Division for Students](#tasks-division-for-students)
-  - [Notes](#notes)
-  - [Images](#images)
+  - [Game Features](#game-features)
+  - [Student Task Assignment](#student-task-assignment)
+  - [Contribution Guidelines](#contribution-guidelines)
+  - [Visual Diagrams](#visual-diagrams)
+    - [Directory Structure](#directory-structure-1)
+    - [Game Flow Diagram](#game-flow-diagram)
   - [License](#license)
 
 ---
 
 ## Project Overview
-**Tetris Neon** is a modern, neon-themed Tetris game implemented in Python using Pygame.  
-The game supports:  
-- Classic Tetris gameplay  
-- Soft and hard drops  
-- Rotation & movement  
-- Line clearing & scoring  
-- Leveling speed up  
-- Leaderboard for top scores  
-- Pause & Game Over screen with overlay  
-- Student project info & team credits in the menu
+Tetris Neon is a Python-based Tetris game with neon-themed graphics using `pygame`. The project is structured with modular components for UI rendering, game logic, settings, and leaderboard management. The game supports score tracking, line clearing, game over detection, and a leaderboard.
 
 ---
 
 ## Directory Structure
-
 ```
 Tetris_Game/
-├── .venv/                 # Virtual environment
-├── assets/
-│   ├── fonts/
-│   │   ├── NotoSans-Bold.ttf
-│   │   ├── NotoSans-Regular.ttf
-│   ├── images/
-│   │   └── game_screenshot.png
-│   └── sounds/
-│       ├── clear.wav
-│       ├── drop.wav
-│       ├── move.wav
-│       └── rotate.wav
-├── data/
-│   └── leaderboard.json
-├── src/
-│   ├── core/
-│   │   ├── board.py
-│   │   ├── game_manager.py
-│   │   ├── leaderboard.py
-│   │   ├── settings.py
-│   │   └── tetromino.py
-│   ├── ui/
-│   │   ├── menu.py
-│   │   └── ui_renderer.py
-├── main.py
-├── README.md
-└── pyproject.toml          # uv package manager config
+├─ .venv/                  # Python virtual environment
+├─ assets/
+│  ├─ fonts/               # Fonts including NotoSans for Vietnamese support
+│  ├─ sounds/              # Sound effects for move, rotate, drop, clear
+├─ data/
+│  └─ leaderboard.json     # Leaderboard storage
+├─ src/
+│  ├─ core/
+│  │  ├─ __init__.py
+│  │  ├─ board.py          # Handles the game board and line clearing
+│  │  ├─ game_manager.py   # Main game logic: spawning, movement, score, game over
+│  │  ├─ leaderboard.py    # Save/load scores
+│  │  ├─ settings.py       # GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, offsets, FPS, window size
+│  │  └─ tetromino.py      # Tetromino pieces and rotations
+│  ├─ ui/
+│  │  ├─ __init__.py
+│  │  ├─ menu.py           # Menu system: start/quit, group info display
+│  │  └─ ui_renderer.py    # Drawing board, pieces, UI panel, pause/game over
+│  └─ main.py              # Entry point: initialize pygame, loop, input handling
+├─ README.md               # Project documentation
+├─ pyproject.toml          # Project management with UV package manager
+└─ requirements.txt        # Python dependencies
 ```
 
 ---
 
 ## Environment Setup
+1. Clone the repository:
+   ```bash
+   git clone <repo-url>
+   cd Tetris_Game
+   ```
 
-1. **Python**: `>=3.10`  
-2. **Virtual environment**:  
+2. Create and activate virtual environment:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate   # Linux/Mac
+   .\.venv\Scripts\activate   # Windows
+   ```
 
-```bash
-python -m venv .venv
-```
-
-3. **Activate virtual environment**:
-
-- Windows:
-```bash
-.venv\Scripts\activate
-```
-- macOS / Linux:
-```bash
-source .venv/bin/activate
-```
-
-4. **Install dependencies using `uv`**:
-```bash
-uv install
-```
-
-`pyproject.toml` example:
-```toml
-[project]
-name = "tetris_project"
-version = "1.0.0"
-requires-python = ">=3.10"
-
-[tool.uv]
-venv = ".venv"
-```
-
----
-
-## Game Features
-
-- Neon-themed Tetris board  
-- Dynamic speed level based on cleared lines  
-- Hard & soft drop  
-- Pause / resume  
-- Game Over screen with overlay background  
-- Score, Level, Lines display  
-- Leaderboard saved to `data/leaderboard.json`  
-- Student menu with group name and members  
-
----
-
-## Function Overview
-
-### GameManager
-- `update(dt)` – update the game every frame  
-- `move_left()`, `move_right()` – move piece horizontally  
-- `rotate_piece()` – rotate the current piece  
-- `soft_drop()` – move piece down one step  
-- `hard_drop()` – drop piece to the bottom  
-- `lock_current()` – lock piece, clear lines, spawn next piece  
-- `game_over_event()` – triggers game over, saves score to leaderboard  
-
-### Board
-- `valid_position(piece, dx, dy)` – check if piece can move/rotate  
-- `place_piece(piece)` – place piece on the grid  
-- `clear_lines()` – remove full lines, return cleared count  
-
-### Tetromino
-- Represents each Tetris piece  
-- Holds shape, color, position, rotation  
-- `rotate()` – rotate shape  
-- `get_cells()` – returns occupied grid cells  
-
-### UI Renderer
-- `draw_board(board)` – draws the grid & blocks  
-- `draw_piece(piece)` – draw current piece  
-- `draw_ui_panel(game)` – score, level, lines panel  
-- `render(game, paused)` – render game frame with optional pause overlay  
-- Game Over overlay with score display  
-
-### Menu
-- Shows:
-  - Game title  
-  - Group name & student members (MSSV + Name)  
-  - Instructions: `Press ENTER to Start or ESC to Quit`  
+3. Install dependencies:
+   ```bash
+   pip install pygame
+   ```
+   Or using UV package manager (pyproject.toml):
+   ```bash
+   uv install
+   ```
 
 ---
 
 ## How to Run
-
-1. Activate virtual environment  
-2. Run the game:
 ```bash
 py main.py
 ```
-3. In menu:
-- `ENTER` – start game  
-- `ESC` – quit game  
-- During game:
-  - Arrow keys – move / rotate  
-  - `DOWN` – soft drop  
-  - `SPACE` – hard drop  
-  - `P` – pause / resume  
-  - `R` – restart after Game Over  
+Controls:
+- **LEFT/RIGHT ARROWS**: Move piece
+- **UP ARROW**: Rotate piece
+- **DOWN ARROW**: Soft drop
+- **SPACE**: Hard drop
+- **P**: Pause/Resume
+- **R**: Restart after Game Over
+- **ESC**: Quit
 
 ---
 
-## Contributing
+## Game Features
+- Neon-themed Tetris graphics.
+- Score calculation based on cleared lines and level.
+- Level progression increases falling speed.
+- Hard drop and soft drop mechanics.
+- Pause and resume functionality.
+- Game Over detection with visual overlay.
+- Leaderboard: top 10 scores saved in `data/leaderboard.json`.
+- Vietnamese font support for menu and member names.
 
-1. Fork the repository  
-2. Create your feature branch:  
-```bash
-git checkout -b feature/your-feature
+---
+
+## Student Task Assignment
+| Student ID  | Name                   | Task |
+|------------|------------------------|--------------------------------------|
+| 22730075   | Nguyễn Quốc Huy        | Admin, core game manager, leaderboard, main.py |
+| 22730094   | Trần Hữu Tài           | Tetromino shapes, piece movement logic |
+| 25730007   | Đồng Nguyễn Vũ Anh     | Board logic, line clearing, collision detection |
+| 25730009   | Phạm Anh               | UI rendering, pause/game over screen, fonts/sounds integration |
+| 22730083   | Lục Gia Mẫn            | Menu system, start/quit, group info display, Vietnamese fonts |
+
+---
+
+## Contribution Guidelines
+- Fork the repository.
+- Create a branch for your feature:
+  ```bash
+  git checkout -b feature/my-feature
+  ```
+- Make changes and test thoroughly.
+- Commit with descriptive message:
+  ```bash
+  git commit -m "Add feature XYZ"
+  ```
+- Push to your fork:
+  ```bash
+  git push origin feature/my-feature
+  ```
+- Create a pull request for review.
+
+---
+
+## Visual Diagrams
+### Directory Structure
 ```
-3. Commit your changes:  
-```bash
-git commit -m "Add new feature"
+Tetris_Game
+├─ src
+│  ├─ core
+│  │  ├─ board.py
+│  │  ├─ game_manager.py
+│  │  ├─ leaderboard.py
+│  │  ├─ settings.py
+│  │  └─ tetromino.py
+│  ├─ ui
+│  │  ├─ menu.py
+│  │  └─ ui_renderer.py
+│  └─ main.py
+├─ assets
+│  ├─ fonts
+│  └─ sounds
+├─ data
+└─ README.md
 ```
-4. Push to the branch:  
-```bash
-git push origin feature/your-feature
+
+### Game Flow Diagram
 ```
-5. Open a pull request  
-
----
-
-## Tasks Division for Students
-
-| Student | Task |
-|---------|------|
-| Nguyễn Quốc Huy (22730075) | GameManager & Board logic |
-| Trần Hữu Tài (22730094) | Tetromino shapes & rotation |
-| Đồng Nguyễn Vũ Anh (25730007) | UI Renderer & score panel |
-| Phạm Anh (25730009) | Menu & team info display |
-| Lục Gia Mẫn (22730083) | Leaderboard & Game Over handling |
-
----
-
-## Notes
-
-- Make sure fonts (`NotoSans-Bold.ttf`, `NotoSans-Regular.ttf`) are available to correctly render Vietnamese characters  
-- Sounds are optional; the game works without them  
-- The game automatically saves top 10 scores to `data/leaderboard.json`  
-- Recommended screen resolution: 1280x720 for proper layout
-
----
-
-## Images
-
-![Gameplay](assets/images/game_screenshot.png)
+[ Menu ] --Enter--> [ Game Loop ] --Lines cleared/lock piece--> [ Score Update / Level Up ]
+         \                                            
+          ESC                                            
+           \                                            
+            Quit                                      
+[ Pause (P) ] --Resume--> [ Game Loop ]
+[ Game Over ] --R--> [ Menu / Restart ]
+```
 
 ---
 
 ## License
+MIT License
 
-This project is for educational purposes only.
