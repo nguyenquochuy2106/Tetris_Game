@@ -1,0 +1,127 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.so
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+*.spec
+*.log
+
+# Virtual environment (uv + others)
+.venv/
+venv/
+.env/
+env/
+.uv/
+uv.lock
+
+# UV cache
+.uv-cache/
+.uv/
+
+# Byte-compiled
+*.pyc
+*.pyo
+*.$py.class
+
+# =========================
+# IDE / Editor
+# =========================
+
+# VS Code
+.vscode/
+.history/
+*.code-workspace
+
+# PyCharm / JetBrains
+.idea/
+*.iml
+out/
+
+# Sublime
+*.sublime-workspace
+*.sublime-project
+
+# =========================
+# OS Specific
+# =========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+__MACOSX/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+.nfs*
+
+# =========================
+# Pygame / Media
+# =========================
+
+# Ignore generated images, screenshots, recordings
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.tiff
+*.gif
+*.mp4
+*.avi
+*.wav
+*.mp3
+*.ogg
+
+# But keep assets folder structure
+!assets/
+!assets/**
+# Allow only specific assets
+assets/fonts/**
+assets/sounds/**
+assets/images/**
+
+# =========================
+# Project Specific
+# =========================
+
+# Cache / temp files
+tmp/
+temp/
+.cache/
+logs/
+*.tmp
+
+# Game temporary save/state files
+*.save
+*.sav
+*.state
+*.dat
+
+# High scores (if auto-generated)
+highscores.json
+
+# =========================
+# Notebook / Exports
+# =========================
+*.ipynb_checkpoints/
+*.pickle
+*.pkl
+
+# =========================
+# Ignore README draft exports
+# =========================
+README_draft*.md
