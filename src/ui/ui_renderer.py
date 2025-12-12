@@ -21,8 +21,12 @@ class UIRenderer:
                 r = pygame.Rect(OFFSET_X+x*CELL_SIZE, OFFSET_Y+y*CELL_SIZE, CELL_SIZE-2, CELL_SIZE-2)
                 pygame.draw.rect(self.screen, color if color else (25,25,35), r, border_radius=6)
 
+    # vẽ mảnh hiện tại đang rơi
     def draw_piece(self, piece):
-        pass
+        for x,y in piece.get_cells():
+            if y<0: continue
+            r = pygame.Rect(OFFSET_X+x*CELL_SIZE, OFFSET_Y+y*CELL_SIZE, CELL_SIZE-2, CELL_SIZE-2)
+            pygame.draw.rect(self.screen, piece.color, r, border_radius=6)
 
     def draw_ui_panel(self, game):
         pass
@@ -30,5 +34,5 @@ class UIRenderer:
     def render(self, game, paused=False):
         self.screen.fill((8, 8, 18)) # set background
         self.draw_board(game.board)
-        pass
+        self.draw_piece(game.current)
 
