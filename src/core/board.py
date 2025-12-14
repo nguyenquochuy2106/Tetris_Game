@@ -18,4 +18,11 @@ class Board:
             # Nếu y < 0, vẫn coi là invalid nếu top row bị chặn
             if ny < 0 and self.grid[0][nx] is not None:
                 return False
-        return True
+        return True        return True
+
+    def place_piece(self, piece):
+        print(f"[DEBUG] Locking piece {piece.key} at y={piece.y}")
+        for x, y in piece.get_cells():
+            if 0 <= y < self.height:
+                self.grid[y][x] = piece.color
+        print(f"[DEBUG] Placed piece {piece.key} on board")
