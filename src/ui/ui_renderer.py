@@ -45,6 +45,7 @@ class UIRenderer:
     LEADERBOARD_START_OFFSET_Y = 0
     LEADERBOARD_ENTRY_HEIGHT = 30
     RESTART_HINT_OFFSET_Y = -50
+    
     def __init__(self, screen):
         self.screen = screen
         try:
@@ -53,6 +54,11 @@ class UIRenderer:
         except:
             self.font = pygame.font.SysFont("Arial", self.FONT_SIZE_NORMAL)
             self.big_font = pygame.font.SysFont("Arial", self.FONT_SIZE_LARGE)
+
+        # Cache static text surfaces (rendered once)
+        self.paused_text = self.big_font.render("PAUSED", True, self.COLOR_PAUSED)
+        self.game_over_text = self.big_font.render("GAME OVER", True, self.COLOR_GAME_OVER)
+        self.restart_hint_text = self.font.render("Press R to Restart", True, self.COLOR_TEXT_WHITE)
 
     # vẽ bảng grid trong board.grid theo màu của từng ô
     def draw_board(self, board):
@@ -117,12 +123,11 @@ class UIRenderer:
         self.draw_info_panel(game)
 
         if paused:
-            paused_text = self.big_font.render("PAUSED", True, self.COLOR_PAUSED)
-            paused_rect = paused_text.get_rect(
+            paused_rect = self.paused_text.get_rect(
                 center=(OFFSET_X + GRID_WIDTH * CELL_SIZE // 2,
                        OFFSET_Y + GRID_HEIGHT * CELL_SIZE // 2)
             )
-            self.screen.blit(paused_text, paused_rect)
+            self.screen.blit(self.paused_text, paused_rect)
         
         if game.game_over:
             # overlay tối làm background game over
@@ -132,11 +137,10 @@ class UIRenderer:
             self.screen.blit(overlay, (0, 0))
 
             # GAME OVER title
-            game_over_text = self.big_font.render("GAME OVER", True, self.COLOR_GAME_OVER)
-            game_over_rect = game_over_text.get_rect(
+            game_over_rect = self.game_over_text.get_rect(
                 center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + self.GAME_OVER_TITLE_OFFSET_Y)
             )
-            self.screen.blit(game_over_text, game_over_rect)
+            self.screen.blit(self.game_over_text, game_over_rect)
 
             # SCORE hiển thị
             score_text = self.font.render(f"Final Score: {game.score}", True, self.COLOR_TEXT_WHITE)
@@ -160,10 +164,9 @@ class UIRenderer:
                 self.screen.blit(leaderboard_entry_text, leaderboard_entry_rect)
 
             # Restart hint
-            restart_text = self.font.render("Press R to Restart", True, self.COLOR_TEXT_WHITE)
-            restart_rect = restart_text.get_rect(
+            restart_rect = self.restart_hint_text.get_rect(
                 center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT + self.RESTART_HINT_OFFSET_Y)
             )
-            self.screen.blit(restart_text, restart_rect)
+            self.screen.blit(self.restart_hint_text, restart_rect)
 
 
