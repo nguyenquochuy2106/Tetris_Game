@@ -67,18 +67,26 @@ Tetris_Game/
 
 3. Install dependencies:
    ```bash
-   pip install pygame
+   pip install -r requirements.txt
    ```
-   Or using UV package manager (pyproject.toml):
+   Or using UV package manager:
    ```bash
-   uv install
+   uv sync
    ```
 
 ---
 
 ## How to Run
+Run one of the following commands depending on your Python installation:
 ```bash
+# Windows
 py main.py
+
+# Or
+python main.py
+
+# Or
+python3 main.py
 ```
 Controls:
 - **LEFT/RIGHT ARROWS**: Move piece
