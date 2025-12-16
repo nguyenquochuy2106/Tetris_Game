@@ -12,7 +12,7 @@ def main():
     pygame.mixer.pre_init(44100, -16, 2, 512)
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-    pygame.display.set_caption("Tetris Neon - Student 1")
+    pygame.display.set_caption("Tetris Neon - Nhóm 04")
     clock = pygame.time.Clock()
     ui = UIRenderer(screen)
     menu = Menu(screen)
