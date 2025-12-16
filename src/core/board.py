@@ -26,3 +26,10 @@ class Board:
             if 0 <= y < self.height:
                 self.grid[y][x] = piece.color
         print(f"[DEBUG] Placed piece {piece.key} on board")
+
+def clear_lines(self):
+        new_grid = []
+        cleared = 0
+        for row in self.grid:
+            if all(cell is not None for cell in row):
+                cleared += 1
