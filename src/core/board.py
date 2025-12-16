@@ -24,5 +24,4 @@ class Board:
         print(f"[DEBUG] Locking piece {piece.key} at y={piece.y}")
         for x, y in piece.get_cells():
             if 0 <= y < self.height:
-                self.grid[y][x] = piece.color
-        print(f"[DEBUG] Placed piece {piece.key} on board")
+           
