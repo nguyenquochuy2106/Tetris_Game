@@ -67,7 +67,7 @@ Tetris_Game/
 
 3. Install dependencies:
    ```bash
-   pip install pygame
+   pip install -r requirements.txt
    ```
    Or using UV package manager (pyproject.toml):
    ```bash
