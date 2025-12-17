@@ -27,8 +27,19 @@ class UIRenderer:
             r = pygame.Rect(OFFSET_X+x*CELL_SIZE, OFFSET_Y+y*CELL_SIZE, CELL_SIZE-2, CELL_SIZE-2)
             pygame.draw.rect(self.screen, piece.color, r, border_radius=6)
 
+    def draw_ui_panel(self, game):
+        x = OFFSET_X + GRID_WIDTH*CELL_SIZE + 20
+        y = OFFSET_Y
+        rect = pygame.Rect(x,y,180,220)
+        pygame.draw.rect(self.screen,(18,18,28),rect,border_radius=10)
+        pygame.draw.rect(self.screen,(0,180,220),rect,width=2,border_radius=10)
+        self.screen.blit(self.font.render(f"SCORE: {game.score}", True,(0,255,255)), (x+12,y+12))
+        self.screen.blit(self.font.render(f"LEVEL: {game.level}", True,(0,255,255)), (x+12,y+42))
+        self.screen.blit(self.font.render(f"LINES: {game.lines}", True,(0,255,255)), (x+12,y+72))
+
     def render(self, game, paused=False):
         # nền chính
         self.screen.fill((8, 8, 18))
         self.draw_board(game.board)
         self.draw_piece(game.current)
+        self.draw_ui_panel(game)
