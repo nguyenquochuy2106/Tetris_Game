@@ -21,7 +21,14 @@ class UIRenderer:
                 r = pygame.Rect(OFFSET_X+x*CELL_SIZE, OFFSET_Y+y*CELL_SIZE, CELL_SIZE-2, CELL_SIZE-2)
                 pygame.draw.rect(self.screen, color if color else (25,25,35), r, border_radius=6)
 
+    def draw_piece(self, piece):
+        for x,y in piece.get_cells():
+            if y<0: continue
+            r = pygame.Rect(OFFSET_X+x*CELL_SIZE, OFFSET_Y+y*CELL_SIZE, CELL_SIZE-2, CELL_SIZE-2)
+            pygame.draw.rect(self.screen, piece.color, r, border_radius=6)
+
     def render(self, game, paused=False):
         # nền chính
         self.screen.fill((8, 8, 18))
         self.draw_board(game.board)
+        self.draw_piece(game.current)
