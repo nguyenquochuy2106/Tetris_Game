@@ -43,3 +43,9 @@ class UIRenderer:
         self.draw_board(game.board)
         self.draw_piece(game.current)
         self.draw_ui_panel(game)
+
+        if paused:
+            t = self.big_font.render("PAUSED", True, (255, 200, 0))
+            r = t.get_rect(center=(OFFSET_X + GRID_WIDTH*CELL_SIZE//2,
+                                OFFSET_Y + GRID_HEIGHT*CELL_SIZE//2))
+            self.screen.blit(t, r)
