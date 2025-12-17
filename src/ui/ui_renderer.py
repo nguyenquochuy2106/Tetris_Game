@@ -1,5 +1,5 @@
 import pygame
-from src.core.settings import CELL_SIZE, OFFSET_X, OFFSET_Y, GRID_WIDTH, GRID_HEIGHT
+from src.core.settings import CELL_SIZE, OFFSET_X, OFFSET_Y, GRID_WIDTH, GRID_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT
 
 class UIRenderer:
     def __init__(self, screen):
@@ -49,3 +49,33 @@ class UIRenderer:
             r = t.get_rect(center=(OFFSET_X + GRID_WIDTH*CELL_SIZE//2,
                                 OFFSET_Y + GRID_HEIGHT*CELL_SIZE//2))
             self.screen.blit(t, r)
+
+        if game.game_over:
+            # overlay tối làm background game over
+            overlay = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
+            overlay.set_alpha(200)  # mờ
+            overlay.fill((0, 0, 0))
+            self.screen.blit(overlay, (0, 0))
+
+            # GAME OVER title
+            t = self.big_font.render("GAME OVER", True, (255, 60, 60))
+            r = t.get_rect(center=(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 - 100))
+            self.screen.blit(t, r)
+
+            # SCORE hiển thị
+            score_text = self.font.render(f"Final Score: {game.score}", True, (255, 255, 255))
+            r2 = score_text.get_rect(center=(WINDOW_WIDTH//2, WINDOW_HEIGHT//2 - 50))
+            self.screen.blit(score_text, r2)
+
+            # Leaderboard top 10
+            top_scores = game.leaderboard.load()
+            y_offset = WINDOW_HEIGHT//2
+            for i, rec in enumerate(top_scores):
+                s = self.font.render(f"{i+1}. {rec['name']} - {rec['score']}", True, (0, 255, 255))
+                r3 = s.get_rect(center=(WINDOW_WIDTH//2, y_offset + i*30))
+                self.screen.blit(s, r3)
+
+            # Restart hint
+            s2 = self.font.render("Press R to Restart", True, (255, 255, 255))
+            r4 = s2.get_rect(center=(WINDOW_WIDTH//2, WINDOW_HEIGHT - 50))
+            self.screen.blit(s2, r4)
