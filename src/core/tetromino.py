@@ -26,9 +26,11 @@ class Tetromino:
         self.x = 0
         self.y = 0
         self.rotation = 0
+        print(f"[DEBUG] Created piece {self.key} at x={self.x}, y={self.y}")
 
     def rotate(self):
         self.shape = [list(r) for r in zip(*self.shape[::-1])]
+        print(f"[DEBUG] Rotated piece {self.key}")
 
     def get_cells(self):
         cells = []
