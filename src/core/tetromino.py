@@ -20,11 +20,20 @@ NEON_COLORS = [
 
 class Tetromino:
     def __init__(self, key=None):
-        return
-       
+        self.key = key or random.choice(list(SHAPES.keys()))
+        self.shape = [row[:] for row in SHAPES[self.key]]
+        self.color = random.choice(NEON_COLORS)
+        self.x = 0
+        self.y = 0
+        self.rotation = 0
+
     def rotate(self):
-        return
+        self.shape = [list(r) for r in zip(*self.shape[::-1])]
 
     def get_cells(self):
         cells = []
+        for r, row in enumerate(self.shape):
+            for c, v in enumerate(row):
+                if v:
+                    cells.append((self.x + c, self.y + r))
         return cells
