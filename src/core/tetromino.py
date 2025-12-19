@@ -17,3 +17,14 @@ NEON_COLORS = [
     (0,255,128),
     (255,128,0),
 ]
+
+class Tetromino:
+    def __init__(self, key=None):
+        return
+       
+    def rotate(self):
+        return
+
+    def get_cells(self):
+        cells = []
+        return cells
