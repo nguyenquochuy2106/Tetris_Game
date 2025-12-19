@@ -23,8 +23,8 @@ class Tetromino:
         self.key = key or random.choice(list(SHAPES.keys()))
         self.shape = [row[:] for row in SHAPES[self.key]]
         self.color = random.choice(NEON_COLORS)
-        self.x = 0
-        self.y = 0
+        self.x = 4
+        self.y = -2   # spawn slightly above board
         self.rotation = 0
         print(f"[DEBUG] Created piece {self.key} at x={self.x}, y={self.y}")
 
