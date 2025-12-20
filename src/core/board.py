@@ -38,3 +38,6 @@ if all(cell is not None for cell in row):
         for _ in range(cleared):
             new_grid.insert(0, [None for _ in range(self.width)])
         self.grid = new_grid
+if cleared:
+            print(f"[DEBUG] Cleared {cleared} lines")
+        return cleared
