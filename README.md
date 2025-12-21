@@ -166,6 +166,11 @@ Tetris_Game
 [ Game Over ] --R--> [ Menu / Restart ]
 ```
 
+### Game Screen Shot
+| Main Menu | Game Play | Game Over |
+|-----------|-----------|-----------|
+| ![Main Menu](https://github.com/user-attachments/assets/8b50b149-1267-4f33-92cc-4a15ca5f4e87) | ![Game Play](https://github.com/user-attachments/assets/581dd7d9-902e-4bdb-baa1-f56ad9df077e) | ![Game Over](https://github.com/user-attachments/assets/73998a3c-5eef-49e5-81a3-6d5cdf07e528) |
+
 ---
 
 ## License
