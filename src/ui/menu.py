@@ -18,7 +18,7 @@ class Menu:
 
 
         # Thông tin nhóm
-        self.group_name = "Nhóm Tetris Neon"
+        self.group_name = "Nhóm 4"
         self.members = [
             {"mssv": "22730075", "name": "Nguyễn Quốc Huy"},
             {"mssv": "22730094 ", "name": "Trần Hữu Tài"},
@@ -69,3 +69,4 @@ class Menu:
 
             pygame.display.flip()
             clock.tick(30)
+
