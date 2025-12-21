@@ -27,4 +27,17 @@ def place_piece(self, piece):
                 self.grid[y][x] = piece.color
         print(f"[DEBUG] Placed piece {piece.key} on board")
 
-
+def clear_lines(self):
+        new_grid = []
+        cleared = 0
+        for row in self.grid:
+if all(cell is not None for cell in row):
+                cleared += 1
+            else:
+                new_grid.append(row)
+        for _ in range(cleared):
+            new_grid.insert(0, [None for _ in range(self.width)])
+        self.grid = new_grid
+if cleared:
+            print(f"[DEBUG] Cleared {cleared} lines")
+        return cleared
