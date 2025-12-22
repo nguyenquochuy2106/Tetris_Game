@@ -2,6 +2,8 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
+MAX_NAME_LENGTH = 15
+
 import pygame
 from core.settings import WINDOW_WIDTH, WINDOW_HEIGHT, FPS
 from core.game_manager import GameManager
@@ -34,7 +36,22 @@ def run_game_loop(game, ui, clock):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.KEYDOWN:
+
+            # Handle name input when game is over
+            if game.game_over and game.awaiting_name_input:
+                if event.type == pygame.TEXTINPUT:
+                    if len(game.player_name) < MAX_NAME_LENGTH:
+                        game.player_name += event.text
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        game.player_name = game.player_name[:-1]
+                    elif event.key == pygame.K_RETURN:
+                        if not game.player_name.strip():
+                            game.player_name = "Player"
+                        game.submit_name()
+
+            # Normal game input
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p and not game.game_over:
                     paused = not paused
                 if not paused and not game.game_over:
@@ -48,7 +65,9 @@ def run_game_loop(game, ui, clock):
                         game.soft_drop()
                     elif event.key == pygame.K_SPACE:
                         game.hard_drop()
-                if game.game_over:
+
+                # Only allow restart after name submitted
+                if game.game_over and game.name_submitted:
                     if event.key == pygame.K_r:
                         print("[DEBUG] Restarting game")
                         return  # back to menu

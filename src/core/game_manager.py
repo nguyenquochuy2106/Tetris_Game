@@ -16,6 +16,9 @@ class GameManager:
         self.speed_level = 0
         self.drop_interval = 0.8
         self.game_over = False
+        self.awaiting_name_input = False
+        self.player_name = ""
+        self.name_submitted = False
         self.leaderboard = Leaderboard()
 
         print(f"[DEBUG] Created piece {self.current.key} at x={self.current.x}, y={self.current.y}")
@@ -102,5 +105,12 @@ class GameManager:
 
     def game_over_event(self):
         self.game_over = True
-        self.leaderboard.add_score("Player", self.score)
+        self.awaiting_name_input = True
         print(f"[DEBUG] Game Over! Final Score: {self.score}")
+
+    def submit_name(self):
+        name = self.player_name.strip() or "Player"
+        self.leaderboard.add_score(name, self.score)
+        self.awaiting_name_input = False
+        self.name_submitted = True
+        print(f"[DEBUG] Score saved: {name} - {self.score}")
