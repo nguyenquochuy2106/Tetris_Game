@@ -48,7 +48,6 @@ class UIRenderer:
     NAME_INPUT_HEIGHT = 50
     NAME_INPUT_BORDER_RADIUS = 8
     INSTRUCTION_OFFSET_Y = 20
-    LEADERBOARD_START_OFFSET_Y = 80
     LEADERBOARD_ENTRY_HEIGHT = 30
     RESTART_HINT_OFFSET_Y = -50
     
@@ -199,8 +198,11 @@ class UIRenderer:
             if game.name_submitted:
                 # Leaderboard top 10
                 top_scores = game.leaderboard.load()
-                y_offset = WINDOW_HEIGHT // 2 + self.LEADERBOARD_START_OFFSET_Y
+                y_offset = WINDOW_HEIGHT // 2
                 for index, record in enumerate(top_scores):
+                    score = record['score']
+                    if(score == 0):
+                        break
                     leaderboard_entry_text = self.font.render(
                         f"{index + 1}. {record['name']} - {record['score']}",
                         True,
