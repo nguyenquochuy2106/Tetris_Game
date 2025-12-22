@@ -4,6 +4,7 @@ from src.core.settings import CELL_SIZE, OFFSET_X, OFFSET_Y, GRID_WIDTH, GRID_HE
 class UIRenderer:
     # Font sizes
     FONT_SIZE_NORMAL = 20
+    FONT_SIZE_MEDIUM = 24
     FONT_SIZE_LARGE = 36
 
     # Board styling
@@ -42,7 +43,12 @@ class UIRenderer:
     # Game over screen layout
     GAME_OVER_TITLE_OFFSET_Y = -100
     GAME_OVER_SCORE_OFFSET_Y = -50
-    LEADERBOARD_START_OFFSET_Y = 0
+    NAME_INPUT_OFFSET_Y = -20
+    NAME_INPUT_WIDTH = 300
+    NAME_INPUT_HEIGHT = 50
+    NAME_INPUT_BORDER_RADIUS = 8
+    INSTRUCTION_OFFSET_Y = 20
+    LEADERBOARD_START_OFFSET_Y = 80
     LEADERBOARD_ENTRY_HEIGHT = 30
     RESTART_HINT_OFFSET_Y = -50
     
@@ -50,9 +56,11 @@ class UIRenderer:
         self.screen = screen
         try:
             self.font = pygame.font.Font("assets/fonts/neon.ttf", self.FONT_SIZE_NORMAL)
+            self.input_font = pygame.font.Font("assets/fonts/NotoSans-Regular.ttf", self.FONT_SIZE_MEDIUM)
             self.big_font = pygame.font.Font("assets/fonts/neon.ttf", self.FONT_SIZE_LARGE)
         except:
             self.font = pygame.font.SysFont("Arial", self.FONT_SIZE_NORMAL)
+            self.input_font = pygame.font.SysFont("Arial", self.FONT_SIZE_MEDIUM)
             self.big_font = pygame.font.SysFont("Arial", self.FONT_SIZE_LARGE)
 
         # Cache static text surfaces (rendered once)
@@ -116,6 +124,40 @@ class UIRenderer:
             (panel_x + self.PANEL_TEXT_PADDING, panel_y + self.PANEL_TEXT_PADDING + self.PANEL_TEXT_LINE_HEIGHT * 2)
         )
 
+    def draw_name_input_box(self, game):
+        """Draw the name input box on game over screen"""
+        box_x = WINDOW_WIDTH // 2 - self.NAME_INPUT_WIDTH // 2
+        box_y = WINDOW_HEIGHT // 2 + self.NAME_INPUT_OFFSET_Y
+
+        # Input box background and border
+        input_rect = pygame.Rect(box_x, box_y, self.NAME_INPUT_WIDTH, self.NAME_INPUT_HEIGHT)
+        pygame.draw.rect(self.screen, self.COLOR_PANEL_BG, input_rect, border_radius=self.NAME_INPUT_BORDER_RADIUS)
+        pygame.draw.rect(self.screen, self.COLOR_PANEL_BORDER, input_rect,
+                        width=3, border_radius=self.NAME_INPUT_BORDER_RADIUS)
+
+        # Render input text or placeholder
+        display_text = game.player_name if game.player_name else "Your Name Here"
+        text_color = self.COLOR_TEXT_WHITE if game.player_name else (100, 100, 100)
+        text_surf = self.input_font.render(display_text, True, text_color)
+        text_rect = text_surf.get_rect(midleft=(box_x + 15, box_y + self.NAME_INPUT_HEIGHT // 2))
+        self.screen.blit(text_surf, text_rect)
+
+        # Blinking cursor (only if typing)
+        if game.player_name and (pygame.time.get_ticks() // 500) % 2 == 0:
+            cursor_x = text_rect.right + 2
+            cursor_y = box_y + 10
+            pygame.draw.line(self.screen, self.COLOR_TEXT_CYAN,
+                            (cursor_x, cursor_y),
+                            (cursor_x, cursor_y + self.NAME_INPUT_HEIGHT - 20), 2)
+
+        # Instruction text
+        instruction = "Press ENTER to submit"
+        instruction_surf = self.font.render(instruction, True, self.COLOR_TEXT_CYAN)
+        instruction_rect = instruction_surf.get_rect(
+            center=(WINDOW_WIDTH // 2, box_y + self.NAME_INPUT_HEIGHT + self.INSTRUCTION_OFFSET_Y)
+        )
+        self.screen.blit(instruction_surf, instruction_rect)
+
     def render(self, game, paused=False):
         self.screen.fill(self.COLOR_BACKGROUND)
         self.draw_board(game.board)
@@ -149,24 +191,30 @@ class UIRenderer:
             )
             self.screen.blit(score_text, score_rect)
 
-            # Leaderboard top 10
-            top_scores = game.leaderboard.load()
-            y_offset = WINDOW_HEIGHT // 2 + self.LEADERBOARD_START_OFFSET_Y
-            for index, record in enumerate(top_scores):
-                leaderboard_entry_text = self.font.render(
-                    f"{index + 1}. {record['name']} - {record['score']}",
-                    True,
-                    self.COLOR_TEXT_CYAN
-                )
-                leaderboard_entry_rect = leaderboard_entry_text.get_rect(
-                    center=(WINDOW_WIDTH // 2, y_offset + index * self.LEADERBOARD_ENTRY_HEIGHT)
-                )
-                self.screen.blit(leaderboard_entry_text, leaderboard_entry_rect)
+            # Show name input if awaiting input
+            if game.awaiting_name_input:
+                self.draw_name_input_box(game)
 
-            # Restart hint
-            restart_rect = self.restart_hint_text.get_rect(
-                center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT + self.RESTART_HINT_OFFSET_Y)
-            )
-            self.screen.blit(self.restart_hint_text, restart_rect)
+            # Only show leaderboard after name submitted
+            if game.name_submitted:
+                # Leaderboard top 10
+                top_scores = game.leaderboard.load()
+                y_offset = WINDOW_HEIGHT // 2 + self.LEADERBOARD_START_OFFSET_Y
+                for index, record in enumerate(top_scores):
+                    leaderboard_entry_text = self.font.render(
+                        f"{index + 1}. {record['name']} - {record['score']}",
+                        True,
+                        self.COLOR_TEXT_CYAN
+                    )
+                    leaderboard_entry_rect = leaderboard_entry_text.get_rect(
+                        center=(WINDOW_WIDTH // 2, y_offset + index * self.LEADERBOARD_ENTRY_HEIGHT)
+                    )
+                    self.screen.blit(leaderboard_entry_text, leaderboard_entry_rect)
+
+                # Restart hint
+                restart_rect = self.restart_hint_text.get_rect(
+                    center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT + self.RESTART_HINT_OFFSET_Y)
+                )
+                self.screen.blit(self.restart_hint_text, restart_rect)
 
 
